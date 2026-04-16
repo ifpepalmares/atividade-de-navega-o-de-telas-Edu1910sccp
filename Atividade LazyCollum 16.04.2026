@@ -1,0 +1,110 @@
+@file:Suppress("unused")
+
+package com.example.lazycolumnbasic
+
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+
+/**
+ * Exemplo bem básico: LazyColumn + estado local.
+ */
+
+data class ItemCompra(
+    val id: Int,
+    val nome: String,
+    var comprado: Boolean = false,
+)
+
+@Composable
+fun ListaComprasScreen(
+    modifier: Modifier = Modifier,
+) {
+    val itens = remember {
+        mutableStateListOf(
+            ItemCompra(1, "Bulbasaur"),
+            ItemCompra(2, "Ivysaur"),
+            ItemCompra(3, "Venusaur"),
+            ItemCompra(4, "Charmander"),
+            ItemCompra(5, "Charmeleon"),
+            ItemCompra(6, "Charizard"),
+            ItemCompra(7, "Squirtle"),
+            ItemCompra(8, "Wartortle"),
+            ItemCompra(9, "Blastoise"),
+            ItemCompra(10, "Caterpie"),
+            ItemCompra(11, "Metapod"),
+            ItemCompra(12, "Butterfree"),
+        )
+    }
+
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        items(
+            items = itens,
+            key = { it.id },
+        ) { item ->
+            ItemCompraRow(
+                item = item,
+                onCompradoChange = { marcado -> item.comprado = marcado },
+            )
+        }
+    }
+}
+
+@Composable
+private fun ItemCompraRow(
+    item: ItemCompra,
+    modifier: Modifier = Modifier,
+    onCompradoChange: (Boolean) -> Unit,
+) {
+    androidx.compose.foundation.layout.Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(
+                width = 2.dp,
+                color = Color.Red,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(8.dp), // opcional, pra não colar na borda
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Checkbox(
+            checked = item.comprado,
+            onCheckedChange = onCompradoChange,
+        )
+        Text(
+            text = item.nome,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.titleMedium,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ListaComprasScreenPreview() {
+    MaterialTheme {
+        ListaComprasScreen()
+    }
+}
